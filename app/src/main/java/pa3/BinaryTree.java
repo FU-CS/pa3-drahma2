@@ -11,6 +11,7 @@ package pa3;
  * 
  */
 public class BinaryTree {
+    
 
     private Node root;
 
@@ -18,7 +19,7 @@ public class BinaryTree {
      * Constructs an empty binary tree.
      */
     public BinaryTree() {
-        
+        this.root = null;
     }
 
     /**
@@ -34,15 +35,29 @@ public class BinaryTree {
      * @return the level order traversal of the tree.
      */
     public String levelOrderTraversal() {
-        
+        String str = "";
+        Node current = this.root;
+        return levelOrderTraversalHelper(current, str);
     }
 
     /** 
      * Helper method for levelOrderTraversal that takes a node as an argument.
      */
     private String levelOrderTraversalHelper(Node node, String result) {
-        
-
+        Queue queue = new Queue();
+        queue.enqueue(node);
+        while (queue.isEmpty() != true){
+            node = queue.dequeue();
+            result += node.value + " ";
+            if (node.left != null){
+                queue.enqueue(node.left);
+            }
+            if (node.right != null){
+                queue.enqueue(node.right);
+            }
+    
+        }
+        return result;
     }
 
     /**
@@ -55,9 +70,33 @@ public class BinaryTree {
      * @param value the value to add to the tree.
      */
     public void add(int value) {
-
-
+        Node node = new Node(value);
+        if (root == null){
+            root = node;
+            return;
+        }
+        Queue queue = new Queue();
+        queue.enqueue(root);
+        while (queue.isEmpty() != true){
+            Node curr = queue.dequeue();
+            if (curr.left == null){
+                curr.left = node;
+                return;
+            }
+            else{
+                queue.enqueue(curr.left);
+            }
+            if (curr.right == null){
+                curr.right = node;
+                return;
+            }
+            else{
+                queue.enqueue(curr.right);
+            }
+        }
     }
+
+    
 
     /** 
      * Inverts the tree: left and right children of each node are swapped.
@@ -78,20 +117,41 @@ public class BinaryTree {
      * 
      */
     public void invert() {
+        invertHelper(this.root);
+    }
 
-       
+    private void invertHelper(Node node){
+        if (node == null) {
+            return;
+        }
+        Node temp = node.left;
+        node.left = node.right;
+        node.right = temp;
+        
+        invertHelper(node.left);
+        invertHelper(node.right);
     }
 
     public int getHeight() {
-        
+        return getHeightHelper(this.root);
     }
 
     /** Counts the height of the tree 
      *  Height is defined as the number of edges in the longest path from the root to a leaf node. 
      */
     private int getHeightHelper(Node node) {
+        if (node == null){
+            return -1;
+        }
+        int leftHeight = getHeightHelper(node.left);
+        int rightHeight = getHeightHelper(node.right);
 
-        
+        if (leftHeight > rightHeight){
+            return leftHeight + 1;
+        }
+        else{
+            return rightHeight + 1;
+        }
     }
 
     public static void main(String[] args) {
